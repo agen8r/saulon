@@ -1,11 +1,18 @@
+import csv
 import os
 
 import matplotlib.pyplot as plt
 import pandas as pd
 import scipy.signal as ss
 
-# Leitura do arquivo CSV
-data = pd.read_csv(r'CovidNumerico.csv', delimiter='\t')
+# Leitura do arquivo CSV e identificando de forma automática qual delimitador do arquivo.
+data = pd.read_csv(r'CovidNumerico.csv', engine='python')
+
+dialect = csv.Sniffer().sniff(open('CovidNumerico.csv').read(1024))
+delimiter = dialect.delimiter
+
+data = pd.read_csv('CovidNumerico.csv', delimiter=delimiter)
+
 
 # Checando valores nulos
 data.isna().sum()
@@ -95,7 +102,7 @@ while True:
     elif opcao in ["3"]:
         passadas = int(
             input("Quantas vezes voce deseja passar o filtro nos dados? "))
-        indice = 6
+        indice = 5
         # Aplicando o filtro
         filtrado = {}
 
@@ -122,7 +129,7 @@ while True:
     elif opcao in ["4"]:
         passadas = int(
             input("Quantas vezes voce deseja passar o filtro nos dados? "))
-        indice = 5
+        indice = 6
         # Aplicando o filtro
         filtrado = {}
 

@@ -11,6 +11,9 @@ data = pd.read_csv(r'CovidNumerico.csv', engine='python')
 dialect = csv.Sniffer().sniff(open('CovidNumerico.csv').read(1024))
 delimiter = dialect.delimiter
 
+print("Delimiter identificado:", repr(delimiter))
+
+
 data = pd.read_csv('CovidNumerico.csv', delimiter=delimiter)
 
 
@@ -66,7 +69,8 @@ while True:
         fig.suptitle('Dados originais vs Dados suavizados')
         axs[0].plot(data_int[colunas[indice]], label="Dados originais")
         axs[0].legend()
-        axs[1].plot(filtrado[colunas[indice]], label="Dados suavizados")
+        axs[1].plot(filtrado[colunas[indice]],
+                    label="Dados suavizados", color='red')
         axs[1].legend()
         plt.show()
 
@@ -93,7 +97,8 @@ while True:
         fig.suptitle('Dados originais vs Dados suavizados')
         axs[0].plot(data_int[colunas[indice]], label="Dados originais")
         axs[0].legend()
-        axs[1].plot(filtrado[colunas[indice]], label="Dados suavizados")
+        axs[1].plot(filtrado[colunas[indice]],
+                    label="Dados suavizados", color='red')
         axs[1].legend()
         plt.show()
 
@@ -120,7 +125,8 @@ while True:
         fig.suptitle('Dados originais vs Dados suavizados')
         axs[0].plot(data_int[colunas[indice]], label="Dados originais")
         axs[0].legend()
-        axs[1].plot(filtrado[colunas[indice]], label="Dados suavizados")
+        axs[1].plot(filtrado[colunas[indice]],
+                    label="Dados suavizados", color='red')
         axs[1].legend()
         plt.show()
 
@@ -147,7 +153,8 @@ while True:
         fig.suptitle('Dados originais vs Dados suavizados')
         axs[0].plot(data_int[colunas[indice]], label="Dados originais")
         axs[0].legend()
-        axs[1].plot(filtrado[colunas[indice]], label="Dados suavizados")
+        axs[1].plot(filtrado[colunas[indice]],
+                    label="Dados suavizados", color='red')
         axs[1].legend()
         plt.show()
 

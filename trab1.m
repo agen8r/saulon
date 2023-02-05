@@ -1,35 +1,80 @@
-% LÍ o arquivo CSV
-pkg load signal
-data = dlmread("CovidNumerico.csv", ",", 1, 0); % inclui a opÁ„o "," para especificar o separador de colunas
+while true
+  % Lista de delimitadores comuns
+  delimiters = {"\t", ",", ";", "|"};
 
-% LÍ o tÌtulo das colunas do arquivo
-fid = fopen("CovidNumerico.csv");
-titulos = strsplit(fgetl(fid), ","); % separa as colunas pelo separador ","
+% Abre o arquivo .csv
+  fid = fopen("CovidNumerico.csv");
+
+% Inicializa a vari√°vel para armazenar o delimitador
+  delimiter = "";
+
+% Loop atrav√©s da lista de delimitadores
+  for i = 1:length(delimiters)
+
+  % Verifica se o arquivo pode ser lido usando o delimitador atual
+    try
+      data = dlmread("CovidNumerico.csv", delimiters{i}, 1, 0);
+      delimiter = delimiters{i};
+      break;
+    catch
+    % Continua para o pr√≥ximo delimitador se a leitura falhar
+      continue;
+    end
+  end
+
+% Fecha o arquivo
 fclose(fid);
 
-% Pergunta ao usu·rio quantas vezes o filtro deve ser aplicado
-passadas = input("Quantas vezes deseja aplicar o filtro de Savitsky-Golay? ");
+% Verifica se o delimitador foi encontrado
+if isempty(delimiter)
+  disp("N√£o foi poss√≠vel identificar o delimitador do arquivo .csv");
+  return;
+else
+  % L√™ o t√≠tulo das colunas do arquivo usando o delimitador identificado
+  fid = fopen("CovidNumerico.csv");
+  titulos = strsplit(fgetl(fid), delimiter);
+  fclose(fid);
 
-%  A coluna que deseja filtrar - Casos novos
-coluna = 3;
-
-% Aplicando o filtro de Savitsky-Golay
-largura = 3;
-ordem_polinomio = 1;
-if mod(largura, 2) == 0 % verifica se o tamanho do filtro È Ìmpar
-    largura = largura + 1; % se n„o for, aumenta em 1 para torn·-lo Ìmpar
+  % Exibe as colunas dispon√≠veis para filtrar
+  clc;
+  disp("Colunas dispon√≠veis para filtrar:");
+  disp(" ");
+  for i = 1:length(titulos)
+    disp(sprintf("%d - %s", i, titulos{i}));
+  end
 end
-filtrado = sgolayfilt(data(:,coluna), ordem_polinomio, largura);
-for i=1:passadas-1
+  % Pergunta ao usu√°rio qual coluna deseja filtrar
+    disp(" ");
+  coluna = input("Qual coluna deseja filtrar? ");
+      if coluna < 1 || coluna > 7
+      disp("Coluna inv√°lida. Tente novamente.")
+      break
+    endif
+  % Pergunta ao usu√°rio quantas vezes o filtro deve ser aplicado
+      disp(" ");
+  passadas = input("Quantas vezes deseja aplicar o filtro de Savitsky-Golay? ");
+  % Aplicando o filtro de Savitsky-Golay
+  largura = 3;
+  ordem_polinomio = 1;
+  if mod(largura, 2) == 0 % verifica se o tamanho do filtro √© √≠mpar
+    largura = largura + 1; % se n√£o for, aumenta em 1 para torn√°-lo √≠mpar
+  end
+  filtrado = sgolayfilt(data(:,coluna), ordem_polinomio, largura);
+  for i=1:passadas-1
     filtrado = sgolayfilt(filtrado, ordem_polinomio, largura);
+  end
+  % Plotagem dos dados originais e dos dados filtrados
+  figure;
+  plot(data(:,coluna), "b", "LineWidth", 2, "DisplayName", sprintf("Dados originais - %s", titulos{coluna}));
+  hold on;
+  plot(filtrado, "r", "LineWidth", 2, "DisplayName", sprintf("Dados filtrados - %s", titulos{coluna}));
+  legend("show");
+  xlabel("Tempo");
+  ylabel("Valor");
+  title(sprintf("Filtro de Savitsky-Golay aplicado %d vezes na coluna %s", passadas, titulos{coluna}));
+  % Pergunta ao usu√°rio se deseja finalizar o programa
+  finalizar = input("Deseja finalizar o programa? (y/n) ", "s");
+  if strcmpi(finalizar, "y") || strcmpi(finalizar, "Y")  %comparando strings independentemente da capitaliza√ß√£o
+    break;
+  end
 end
-
-% Plotagem dos dados originais e dos dados filtrados
-figure;
-plot(data(:,coluna), "b", "LineWidth", 2, "DisplayName", sprintf("Dados originais - %s", titulos{coluna}));
-hold on;
-plot(filtrado, "r", "LineWidth", 2, "DisplayName", sprintf("Dados filtrados - %s", titulos{coluna}));
-legend("show");
-xlabel("Tempo");
-ylabel("Valor");
-title(sprintf("Filtro de Savitsky-Golay aplicado %d vezes na coluna %s", passadas, titulos{coluna}));
